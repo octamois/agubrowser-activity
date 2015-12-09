@@ -47,13 +47,12 @@ except ImportError:
 
     else:
         if platform.architecture()[0] == '64bit':
-            arch = "x86-64"
+            arch = "x86_64"
         else:
             arch = "x86"
 
-    print("ARCH:", arch)
-    webkit = cdll.LoadLibrary("webkit_local/%s/webkit.so" % arch)
-    sys.path.append("webkit_local/%s", arch)
+    webkit = cdll.LoadLibrary("lib/%s/webkit.so" % arch)
+    sys.path.append("lib/%s" % arch)
 
     import webkit
     from webkit import *
