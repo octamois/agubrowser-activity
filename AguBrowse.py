@@ -24,6 +24,7 @@ import pygtk
 import os
 import sys
 import time
+import platform
 import datetime
 import subprocess
 import pango
