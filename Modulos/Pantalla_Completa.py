@@ -24,80 +24,76 @@
 __author__ = "Agustin Zubiaga"
 __date__ = "8 de marzo del 2011, 16:48"
 
-import gtk
-import gobject
+from gi.repository import Gtk
+from gi.repository import Gdk
+from gi.repository import GObject
 
-class Armar_Pantalla_Completa(): 
 
-	def conteo_cb(self):
-		self.window.hide_all()
+class Armar_Pantalla_Completa():
 
-		return self.continuar
+    def conteo_cb(self):
+        self.window.hide()
+        return self.continuar
 
-	
-	def mostrar_boton1(self, event, other): # Cuando se mueve el mouse
-		if self.show_window:
-			self.continuar = False # Desactivar conteo
-			self.window.show_all() # Mostrar ventana emergente
+    def mostrar_boton1(self, event, other): # Cuando se mueve el mouse
+        if self.show_window:
+            self.continuar = False # Desactivar conteo
+            self.window.show_all() # Mostrar ventana emergente
 
-			self.continuar = True # Volver a activar conteo
+            self.continuar = True # Volver a activar conteo
 
-	def salir(self, widget):
-		self.bar.show_all() # Mostrar barras
-		self.show_window = False # Nos aseguramos de que la ventana no se mostrara mas
-		self.window.hide_all() # Ocultar la Ventana
-		self.abrowse.unfullscreen() # Salir de pantalla completa
+    def salir(self, widget):
+        self.bar.show_all() # Mostrar barras
+        self.show_window = False # Nos aseguramos de que la ventana no se mostrara mas
+        self.window.hide() # Ocultar la Ventana
+        self.abrowse.unfullscreen() # Salir de pantalla completa
 
-		# Nota: Cuando se destruye una ventana emergente esta luego aparece como un cuadrado gris
+        # Nota: Cuando se destruye una ventana emergente esta luego aparece como un cuadrado gris
                 # y por eso nunca la destruyo si no que no la muestro
 
+    def show_bars(self, widget):
+        if not self.st:
+            self.bar.show_all()
+            widget.set_label("No mostrar barra de herramientas")
+            self.st = True
 
-	def show_bars(self, widget):
-		if not self.st:
-			self.bar.show_all()
-			widget.set_label("No mostrar barra de herramientas")
-			self.st = True
-	
-		else:
-			self.bar.hide_all()
-			widget.set_label("Mostrar barra de herramientas")
-			self.st = False
-	
-	def __init__(self, abrowse):
+        else:
+            self.bar.hide()
+            widget.set_label("Mostrar barra de herramientas")
+            self.st = False
 
-		abrowse.fullscreen()		
+    def __init__(self, abrowse):
 
-		self.abrowse = abrowse
-		self.st = False
+        self.show_window = True
 
-		bar = abrowse.main.get_child1()
-		bar.hide_all()
-		
-		self.bar = bar
-		
-		self.show_window = True
+        abrowse.fullscreen()
+        abrowse.add_events(Gdk.EventMask.POINTER_MOTION_MASK) # Agregamos eventos
+        abrowse.connect("motion_notify_event", self.mostrar_boton1) # Cuando se mueve el puntero del mouse
 
-		boton_mostrar = gtk.Button("Mostrar barra de herramientas")
-		boton_mostrar.connect("clicked", self.show_bars)
-		boton_salir = gtk.Button(None, stock=gtk.STOCK_LEAVE_FULLSCREEN)
-		boton_salir.connect("clicked", self.salir)
+        self.abrowse = abrowse
+        self.st = False
 
-		hbox = gtk.HBox(False, 10)
-		hbox.add(boton_mostrar)
-		hbox.add(boton_salir)
-		hbox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(0,0,0,1))		
-	
-		self.window = gtk.Window(gtk.WINDOW_POPUP)
-		self.window.add(hbox)
-		self.window.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(0,0,0,1))	
-		hbox.show_all()
+        bar = abrowse.main.get_child1()
+        bar.hide()
 
-		self.continuar = False
-		self.conteo = gobject.timeout_add(6000, self.conteo_cb)
+        self.bar = bar
 
-		abrowse.add_events(gtk.gdk.POINTER_MOTION_MASK) # Agregamos eventos
-		abrowse.connect("motion_notify_event", self.mostrar_boton1) # Cuando se mueve el puntero del mouse
 
-if __name__ == "__main__":
-	print "Este programa solo funciona cuando lo ejecuta AguBrowse"
-	exit()
+        boton_mostrar = Gtk.Button("Mostrar barra de herramientas")
+        boton_mostrar.connect("clicked", self.show_bars)
+        boton_salir = Gtk.Button(None, stock=Gtk.STOCK_LEAVE_FULLSCREEN)
+        boton_salir.connect("clicked", self.salir)
+
+        hbox = Gtk.HBox(False, 10)
+        hbox.add(boton_mostrar)
+        hbox.add(boton_salir)
+        ##hbox.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(0,0,0,1))
+
+        self.window = Gtk.Window(Gtk.WindowType.POPUP)
+        self.window.add(hbox)
+        ##self.window.modify_bg(Gtk.StateType.NORMAL, Gdk.Color(0, 0, 0, 1))
+        hbox.show_all()
+
+        self.continuar = False
+        self.conteo = GObject.timeout_add_seconds(6, self.conteo_cb)
+
