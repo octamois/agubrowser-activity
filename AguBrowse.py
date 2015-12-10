@@ -51,6 +51,7 @@ except ImportError:
         else:
             arch = "x86"
 
+    os.environ['LD_LIBRARY_PATH'] = "lib/%s/" % arch
     webkit = cdll.LoadLibrary("lib/%s/webkit.so" % arch)
     sys.path.append("lib/%s" % arch)
 
