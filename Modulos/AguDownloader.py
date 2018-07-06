@@ -37,7 +37,7 @@ if not os.path.exists(descargas):
 class Descargar(Gtk.Window):
 
     def comenzar_descarga(self):
-        print "La descarga comenzara"
+        print("La descarga comenzara")
         os.system("reset")
         salida = "/tmp/out_abrowse%d" % time.time()
         args = "%s %s %s %s %s" % ("wget", "-P", descargas, self.url, "--no-check-certificate")
@@ -53,7 +53,7 @@ class Descargar(Gtk.Window):
         salida.flush()
         for x in salida.readlines():
             sp = x.split()
-            print sp
+            print(sp)
 
             try:
                 self.barra.set_text(self.texto)

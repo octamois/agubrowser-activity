@@ -24,8 +24,8 @@ import sys
 import time
 import datetime
 import subprocess
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 import sqlite3
 import pygame
 
@@ -97,7 +97,7 @@ class AguBrowse(activity.Activity):
         os.remove(datos+"Marcadores")
         marcadores = open(datos+"Marcadores", "a")
 
-        for x in self.marcadores.keys():
+        for x in list(self.marcadores.keys()):
             marcadores.write(x+">"+self.marcadores[x]+"\n")
         
         marcadores.close()
@@ -239,7 +239,7 @@ class AguBrowse(activity.Activity):
         self.parado = True
 
     def favicon(self, webview, icono):
-        d = urllib.urlopen(icono)
+        d = urllib.request.urlopen(icono)
         if os.path.exists(activity.get_activity_root() + "/data/Favicons/" + icono.split("/")[-1]):
             os.remove("Favicons/" + icono.split("/")[-1])
 
@@ -268,12 +268,12 @@ class AguBrowse(activity.Activity):
         self.estado.display(texto)
         
     def update_marcadores(self):
-        for y in self.botones.keys():
+        for y in list(self.botones.keys()):
             self.marcadores_box.remove(self.botones[y])
 
         self.botones = {}
 
-        for x in self.marcadores.keys():
+        for x in list(self.marcadores.keys()):
             self.botones[x] = Gtk.ToolButton()
             self.botones[x].set_label(x)
             self.botones[x].connect("clicked", self.abrir_direccion, self.marcadores[x])
@@ -390,7 +390,7 @@ GNU General Public License para más detalles.''')
         self.dp = direccion_principal
 
     def guardar_pagina(self, widget):
-        pagina = urllib.urlopen(self.dir_actual)
+        pagina = urllib.request.urlopen(self.dir_actual)
         archivo = open(datos + "Paginas_Guardadas/" + self.dir_actual.split("/")[-1], "w")
         archivo.write("")
         archivo.close()
@@ -430,7 +430,7 @@ GNU General Public License para más detalles.''')
             buffer.set_text("Obteniendo codigo fuente...")
             window.set_title("Codigo fuente de: " + dir)
 
-            codigo = urllib.urlopen(dir)
+            codigo = urllib.request.urlopen(dir)
             string = ""
             cant = 1
 
@@ -476,7 +476,7 @@ GNU General Public License para más detalles.''')
 
         ##vbox.show_all()
 
-        codigo = urllib.urlopen(self.dir_actual)
+        codigo = urllib.request.urlopen(self.dir_actual)
 
         string = ""
         cant = 1
@@ -731,7 +731,7 @@ GNU General Public License para más detalles.''')
         mark = open(datos+"Marcadores", "r")
         for x in mark.readlines():
             sp = x.split(">")
-            print sp
+            print(sp)
             #self.marcadores[sp[0]] = sp[0]
         mark.close()
 
@@ -1024,11 +1024,11 @@ GNU General Public License para más detalles.''')
             dialog.show_all()
             dialog.destroy()
             if response == Gtk.ResponseType.NO:
-                print "NO"
+                print("NO")
 
             else:
                 self.navegador.open(sesion.read())
-                print sesion.read()
+                print(sesion.read())
 
         sesion.close()
 
